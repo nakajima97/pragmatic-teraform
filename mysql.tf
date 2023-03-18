@@ -1,6 +1,6 @@
 resource "aws_db_parameter_group" "example" {
   name = "example"
-  family = "mysql5.7"
+  family = "mysql8.0"
 
   parameter {
     name = "character_set_database"
@@ -16,7 +16,7 @@ resource "aws_db_parameter_group" "example" {
 resource "aws_db_option_group" "example" {
   name = "example"
   engine_name = "mysql"
-  major_engine_version = "5.7"
+  major_engine_version = "8.0"
 
   option {
     option_name = "MARIADB_AUDIT_PLUGIN"
@@ -34,7 +34,7 @@ resource "aws_db_subnet_group" "example" {
 resource "aws_db_instance" "example" {
   identifier = "example"
   engine = "mysql"
-  engine_version = "5.7.25"
+  engine_version = "8.0"
   instance_class = "db.t3.small"
   allocated_storage = 20
   max_allocated_storage = 100
@@ -48,7 +48,7 @@ resource "aws_db_instance" "example" {
   backup_window = "09:10-09:40"
   backup_retention_period = 30
   maintenance_window = "mon:10:10-mon:10:40"
-  auto_minor_version_upgrdae = false
+  auto_minor_version_upgrade = false
   # 削除保護　有効にするとdestroyを気軽に打てないのでfalse設定
   deletion_protection = false
   skip_final_snapshot = false
