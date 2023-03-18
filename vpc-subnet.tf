@@ -54,18 +54,27 @@ resource "aws_route_table_association" "public_1" {
   route_table_id = aws_route_table.public_1.id
 }
 
-resource "aws_subnet" "private_1" {
+resource "aws_subnet" "private_0" {
   vpc_id                  = aws_vpc.example.id
   cidr_block              = "10.0.64.0/24"
   availability_zone       = "ap-northeast-1a"
   map_public_ip_on_launch = false
 }
 
-resource "aws_subnet" "private_2" {
+resource "aws_subnet" "private_1" {
   vpc_id                  = aws_vpc.example.id
   cidr_block              = "10.0.65.0/24"
   availability_zone       = "ap-northeast-1c"
   map_public_ip_on_launch = false
+}
+
+resource "aws_route_table" "private_0" {
+  vpc_id = aws_vpc.example.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.private_1.id
+  }
 }
 
 resource "aws_route_table" "private_1" {
@@ -73,27 +82,18 @@ resource "aws_route_table" "private_1" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.private_2.id
+    gateway_id = aws_nat_gateway.private_1.id
   }
 }
 
-resource "aws_route_table" "private_2" {
-  vpc_id = aws_vpc.example.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.private_2.id
-  }
+resource "aws_route_table_association" "private_0" {
+  subnet_id      = aws_subnet.private_0.id
+  route_table_id = aws_route_table.private_0.id
 }
 
 resource "aws_route_table_association" "private_1" {
   subnet_id      = aws_subnet.private_1.id
   route_table_id = aws_route_table.private_1.id
-}
-
-resource "aws_route_table_association" "private_2" {
-  subnet_id      = aws_subnet.private_2.id
-  route_table_id = aws_route_table.private_2.id
 }
 
 resource "aws_eip" "nat_gateway_1" {
@@ -110,17 +110,17 @@ resource "aws_eip" "nat_gateway_2" {
   ]
 }
 
-resource "aws_nat_gateway" "private_1" {
+resource "aws_nat_gateway" "private_0" {
   allocation_id = aws_eip.nat_gateway_1.id
-  subnet_id     = aws_subnet.private_1.id
+  subnet_id     = aws_subnet.private_0.id
   depends_on = [
     aws_internet_gateway.example
   ]
 }
 
-resource "aws_nat_gateway" "private_2" {
+resource "aws_nat_gateway" "private_1" {
   allocation_id = aws_eip.nat_gateway_2.id
-  subnet_id     = aws_subnet.private_2.id
+  subnet_id     = aws_subnet.private_1.id
   depends_on = [
     aws_internet_gateway.example
   ]
